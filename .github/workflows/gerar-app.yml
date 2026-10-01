@@ -1,0 +1,290 @@
+name: Gerar Aplicativo Android (Play Store)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main, master, Principal ]
+
+jobs:
+  build-android:
+    name: Compilar APK e AAB para Google Play
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Baixar código do repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Configurar Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Criar Chave de Assinatura (Keystore)
+        run: |
+          keytool -genkeypair \
+            -alias terminalb3 \
+            -keyalg RSA \
+            -keysize 2048 \
+            -validity 10000 \
+            -keystore app.keystore \
+            -storepass senha123456 \
+            -keypass senha123456 \
+            -dname "CN=Terminal B3, OU=Mobile, O=Guizante, L=SP, S=SP, C=BR"
+
+      - name: Gerar Projeto Android Nativo
+        run: |
+          mkdir -p android-project/app/src/main/java/com/guizante/terminalb3
+          mkdir -p android-project/app/src/main/res/values
+          mkdir -p android-project/app/src/main/res/mipmap-hdpi
+          mkdir -p android-project/app/src/main/res/drawable
+
+          cat << 'EOF' > android-project/settings.gradle
+          pluginManagement {
+              repositories {
+                  google()
+                  mavenCentral()
+                  gradlePluginPortal()
+              }
+          }
+          dependencyResolutionManagement {
+              repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+              repositories {
+                  google()
+                  mavenCentral()
+              }
+          }
+          rootProject.name = "TerminalB3"
+          include ':app'
+          EOF
+
+          cat << 'EOF' > android-project/build.gradle
+          plugins {
+              id 'com.android.application' version '8.2.2' apply false
+          }
+          EOF
+
+          cat << 'EOF' > android-project/app/build.gradle
+          plugins {
+              id 'com.android.application'
+          }
+
+          android {
+              namespace 'com.guizante.terminalb3'
+              compileSdk 34
+
+              defaultConfig {
+                  applicationId "com.guizante.terminalb3"
+                  minSdk 24
+                  targetSdk 34
+                  versionCode 1
+                  versionName "1.0.0"
+              }
+
+              signingConfigs {
+                  release {
+                      storeFile file("../../app.keystore")
+                      storePassword "senha123456"
+                      keyAlias "terminalb3"
+                      keyPassword "senha123456"
+                  }
+              }
+
+              buildTypes {
+                  release {
+                      minifyEnabled false
+                      signingConfig signingConfigs.release
+                      proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+                  }
+              }
+
+              compileOptions {
+                  sourceCompatibility JavaVersion.VERSION_17
+                  targetCompatibility JavaVersion.VERSION_17
+              }
+          }
+
+          dependencies {
+              implementation 'androidx.appcompat:appcompat:1.6.1'
+              implementation 'com.google.android.material:material:1.11.0'
+              implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+              implementation 'androidx.webkit:webkit:1.10.0'
+          }
+          EOF
+
+          cat << 'EOF' > android-project/app/src/main/AndroidManifest.xml
+          <?xml version="1.0" encoding="utf-8"?>
+          <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+              <uses-permission android:name="android.permission.INTERNET" />
+              <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+              <application
+                  android:allowBackup="true"
+                  android:icon="@android:drawable/sym_def_app_icon"
+                  android:label="Terminal B3"
+                  android:roundIcon="@android:drawable/sym_def_app_icon"
+                  android:supportsRtl="true"
+                  android:theme="@style/Theme.TerminalB3">
+                  <activity
+                      android:name=".MainActivity"
+                      android:exported="true"
+                      android:configChanges="orientation|screenSize|keyboardHidden"
+                      android:windowSoftInputMode="adjustResize">
+                      <intent-filter>
+                          <action android:name="android.intent.action.MAIN" />
+                          <category android:name="android.intent.category.LAUNCHER" />
+                      </intent-filter>
+                  </activity>
+              </application>
+          </manifest>
+          EOF
+
+          cat << 'EOF' > android-project/app/src/main/res/values/colors.xml
+          <?xml version="1.0" encoding="utf-8"?>
+          <resources>
+              <color name="bg_dark">#0B0F17</color>
+              <color name="primary_blue">#38BDF8</color>
+          </resources>
+          EOF
+
+          cat << 'EOF' > android-project/app/src/main/res/values/themes.xml
+          <?xml version="1.0" encoding="utf-8"?>
+          <resources>
+              <style name="Theme.TerminalB3" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+                  <item name="android:statusBarColor">@color/bg_dark</item>
+                  <item name="android:navigationBarColor">@color/bg_dark</item>
+                  <item name="android:windowBackground">@color/bg_dark</item>
+              </style>
+          </resources>
+          EOF
+
+          cat << 'EOF' > android-project/app/src/main/java/com/guizante/terminalb3/MainActivity.java
+          package com.guizante.terminalb3;
+
+          import android.annotation.SuppressLint;
+          import android.graphics.Bitmap;
+          import android.os.Bundle;
+          import android.view.View;
+          import android.webkit.WebChromeClient;
+          import android.webkit.WebResourceRequest;
+          import android.webkit.WebSettings;
+          import android.webkit.WebView;
+          import android.webkit.WebViewClient;
+          import android.widget.ProgressBar;
+          import androidx.appcompat.app.AppCompatActivity;
+          import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
+          public class MainActivity extends AppCompatActivity {
+              private WebView webView;
+              private SwipeRefreshLayout swipeRefresh;
+              private ProgressBar progressBar;
+              private final String APP_URL = "https://terminal-financeiro-b3.streamlit.app/";
+
+              @SuppressLint("SetJavaScriptEnabled")
+              @Override
+              protected void onCreate(Bundle savedInstanceState) {
+                  super.onCreate(savedInstanceState);
+
+                  androidx.coordinatorlayout.widget.CoordinatorLayout layout = new androidx.coordinatorlayout.widget.CoordinatorLayout(this);
+                  layout.setBackgroundColor(0xFF0B0F17);
+
+                  swipeRefresh = new SwipeRefreshLayout(this);
+                  swipeRefresh.setColorSchemeColors(0xFF38BDF8);
+                  swipeRefresh.setProgressBackgroundColorSchemeColor(0xFF1E293B);
+
+                  webView = new WebView(this);
+                  webView.setBackgroundColor(0xFF0B0F17);
+
+                  progressBar = new ProgressBar(this, null, android.R.attr.progressBarStyleHorizontal);
+                  progressBar.setMax(100);
+                  progressBar.setProgressTintList(android.content.res.ColorStateList.valueOf(0xFF38BDF8));
+                  progressBar.setVisibility(View.GONE);
+
+                  swipeRefresh.addView(webView);
+                  layout.addView(swipeRefresh);
+                  layout.addView(progressBar, new androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams(
+                          androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams.MATCH_PARENT, 8
+                  ));
+
+                  setContentView(layout);
+
+                  WebSettings webSettings = webView.getSettings();
+                  webSettings.setJavaScriptEnabled(true);
+                  webSettings.setDomStorageEnabled(true);
+                  webSettings.setDatabaseEnabled(true);
+                  webSettings.setLoadWithOverviewMode(true);
+                  webSettings.setUseWideViewPort(true);
+                  webSettings.setSupportZoom(false);
+                  webSettings.setBuiltInZoomControls(false);
+                  webSettings.setMediaPlaybackRequiresUserGesture(false);
+
+                  webView.setWebViewClient(new WebViewClient() {
+                      @Override
+                      public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                          return false;
+                      }
+
+                      @Override
+                      public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                          progressBar.setVisibility(View.VISIBLE);
+                      }
+
+                      @Override
+                      public void onPageFinished(WebView view, String url) {
+                          progressBar.setVisibility(View.GONE);
+                          swipeRefresh.setRefreshing(false);
+                      }
+                  });
+
+                  webView.setWebChromeClient(new WebChromeClient() {
+                      @Override
+                      public void onProgressChanged(WebView view, int newProgress) {
+                          progressBar.setProgress(newProgress);
+                          if (newProgress == 100) {
+                              progressBar.setVisibility(View.GONE);
+                          }
+                      }
+                  });
+
+                  swipeRefresh.setOnRefreshListener(() -> webView.reload());
+
+                  webView.loadUrl(APP_URL);
+              }
+
+              @Override
+              public void onBackPressed() {
+                  if (webView != null && webView.canGoBack()) {
+                      webView.goBack();
+                  } else {
+                      super.onBackPressed();
+                  }
+              }
+          }
+          EOF
+
+      - name: Instalar Gradle Wrapper
+        run: |
+          cd android-project
+          gradle wrapper
+
+      - name: Compilar AAB (Google Play) e APK (Instalação Direta)
+        run: |
+          cd android-project
+          ./gradlew bundleRelease assembleRelease --no-daemon
+
+      - name: Organizar Arquivos Finais
+        run: |
+          mkdir -p output
+          cp android-project/app/build/outputs/bundle/release/app-release.aab output/TerminalB3-PlayStore.aab
+          cp android-project/app/build/outputs/apk/release/app-release.apk output/TerminalB3-Instalador.apk
+          cp app.keystore output/chave-assinatura.keystore
+
+      - name: Disponibilizar para Download no GitHub
+        uses: actions/upload-artifact@v4
+        with:
+          name: TerminalB3-Arquivos-GooglePlay
+          path: output/
