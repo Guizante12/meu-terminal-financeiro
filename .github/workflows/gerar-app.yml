@@ -23,25 +23,29 @@ jobs:
       - name: Configurar Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Criar Chave de Assinatura (Keystore)
+      - name: Baixar e Instalar Gradle 8.5
         run: |
+          wget -q https://services.gradle.org/distributions/gradle-8.5-bin.zip
+          unzip -q gradle-8.5-bin.zip
+          echo "$PWD/gradle-8.5/bin" >> $GITHUB_PATH
+
+      - name: Gerar Projeto Android e Chave de Assinatura
+        run: |
+          mkdir -p android-project/app/src/main/java/com/guizante/terminalb3
+          mkdir -p android-project/app/src/main/res/values
+
+          # Gerar Keystore oficial dentro da pasta do projeto
           keytool -genkeypair \
             -alias terminalb3 \
             -keyalg RSA \
             -keysize 2048 \
             -validity 10000 \
-            -keystore app.keystore \
+            -keystore android-project/app/app.keystore \
             -storepass senha123456 \
             -keypass senha123456 \
             -dname "CN=Terminal B3, OU=Mobile, O=Guizante, L=SP, S=SP, C=BR"
 
-      - name: Gerar Projeto Android Nativo
-        run: |
-          mkdir -p android-project/app/src/main/java/com/guizante/terminalb3
-          mkdir -p android-project/app/src/main/res/values
-          mkdir -p android-project/app/src/main/res/mipmap-hdpi
-          mkdir -p android-project/app/src/main/res/drawable
-
+          # 1. settings.gradle
           cat << 'EOF' > android-project/settings.gradle
           pluginManagement {
               repositories {
@@ -61,12 +65,14 @@ jobs:
           include ':app'
           EOF
 
+          # 2. build.gradle raiz
           cat << 'EOF' > android-project/build.gradle
           plugins {
               id 'com.android.application' version '8.2.2' apply false
           }
           EOF
 
+          # 3. app/build.gradle com assinatura Play Store
           cat << 'EOF' > android-project/app/build.gradle
           plugins {
               id 'com.android.application'
@@ -86,7 +92,7 @@ jobs:
 
               signingConfigs {
                   release {
-                      storeFile file("../../app.keystore")
+                      storeFile file("app.keystore")
                       storePassword "senha123456"
                       keyAlias "terminalb3"
                       keyPassword "senha123456"
@@ -97,7 +103,6 @@ jobs:
                   release {
                       minifyEnabled false
                       signingConfig signingConfigs.release
-                      proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
                   }
               }
 
@@ -115,6 +120,7 @@ jobs:
           }
           EOF
 
+          # 4. AndroidManifest.xml
           cat << 'EOF' > android-project/app/src/main/AndroidManifest.xml
           <?xml version="1.0" encoding="utf-8"?>
           <manifest xmlns:android="http://schemas.android.com/apk/res/android">
@@ -143,6 +149,7 @@ jobs:
           </manifest>
           EOF
 
+          # 5. Cores e Temas Dark
           cat << 'EOF' > android-project/app/src/main/res/values/colors.xml
           <?xml version="1.0" encoding="utf-8"?>
           <resources>
@@ -162,6 +169,7 @@ jobs:
           </resources>
           EOF
 
+          # 6. MainActivity.java
           cat << 'EOF' > android-project/app/src/main/java/com/guizante/terminalb3/MainActivity.java
           package com.guizante.terminalb3;
 
@@ -266,22 +274,17 @@ jobs:
           }
           EOF
 
-      - name: Instalar Gradle Wrapper
+      - name: Compilar AAB (Google Play) e APK (Instalador)
         run: |
           cd android-project
-          gradle wrapper
-
-      - name: Compilar AAB (Google Play) e APK (Instalação Direta)
-        run: |
-          cd android-project
-          ./gradlew bundleRelease assembleRelease --no-daemon
+          gradle bundleRelease assembleRelease --no-daemon
 
       - name: Organizar Arquivos Finais
         run: |
           mkdir -p output
           cp android-project/app/build/outputs/bundle/release/app-release.aab output/TerminalB3-PlayStore.aab
           cp android-project/app/build/outputs/apk/release/app-release.apk output/TerminalB3-Instalador.apk
-          cp app.keystore output/chave-assinatura.keystore
+          cp android-project/app/app.keystore output/chave-assinatura.keystore
 
       - name: Disponibilizar para Download no GitHub
         uses: actions/upload-artifact@v4
