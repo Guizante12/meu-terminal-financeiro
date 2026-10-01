@@ -34,6 +34,10 @@ jobs:
         run: |
           mkdir -p android-project/app/src/main/java/com/guizante/terminalb3
           mkdir -p android-project/app/src/main/res/values
+          mkdir -p android-project/app/src/main/res/drawable
+
+          # Criar arquivo de regras Proguard vazio para evitar erro de arquivo inexistente
+          touch android-project/app/proguard-rules.pro
 
           # Gerar Chave Oficial (Keystore)
           keytool -genkeypair \
@@ -112,7 +116,6 @@ jobs:
 
           dependencies {
               implementation 'androidx.appcompat:appcompat:1.6.1'
-              implementation 'com.google.android.material:material:1.11.0'
               implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
               implementation 'androidx.webkit:webkit:1.10.0'
           }
@@ -128,7 +131,7 @@ jobs:
               <application
                   android:allowBackup="true"
                   android:icon="@android:drawable/sym_def_app_icon"
-                  android:label="Terminal B3"
+                  android:label="@string/app_name"
                   android:roundIcon="@android:drawable/sym_def_app_icon"
                   android:supportsRtl="true"
                   android:theme="@style/Theme.TerminalB3">
@@ -146,6 +149,13 @@ jobs:
           </manifest>
           EOF
 
+          cat << 'EOF' > android-project/app/src/main/res/values/strings.xml
+          <?xml version="1.0" encoding="utf-8"?>
+          <resources>
+              <string name="app_name">Terminal B3</string>
+          </resources>
+          EOF
+
           cat << 'EOF' > android-project/app/src/main/res/values/colors.xml
           <?xml version="1.0" encoding="utf-8"?>
           <resources>
@@ -157,7 +167,7 @@ jobs:
           cat << 'EOF' > android-project/app/src/main/res/values/themes.xml
           <?xml version="1.0" encoding="utf-8"?>
           <resources>
-              <style name="Theme.TerminalB3" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+              <style name="Theme.TerminalB3" parent="Theme.AppCompat.DayNight.NoActionBar">
                   <item name="android:statusBarColor">@color/bg_dark</item>
                   <item name="android:navigationBarColor">@color/bg_dark</item>
                   <item name="android:windowBackground">@color/bg_dark</item>
@@ -192,7 +202,7 @@ jobs:
               protected void onCreate(Bundle savedInstanceState) {
                   super.onCreate(savedInstanceState);
 
-                  androidx.coordinatorlayout.widget.CoordinatorLayout layout = new androidx.coordinatorlayout.widget.CoordinatorLayout(this);
+                  android.widget.FrameLayout layout = new android.widget.FrameLayout(this);
                   layout.setBackgroundColor(0xFF07090E);
 
                   swipeRefresh = new SwipeRefreshLayout(this);
@@ -209,8 +219,8 @@ jobs:
 
                   swipeRefresh.addView(webView);
                   layout.addView(swipeRefresh);
-                  layout.addView(progressBar, new androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams(
-                          androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams.MATCH_PARENT, 8
+                  layout.addView(progressBar, new android.widget.FrameLayout.LayoutParams(
+                          android.widget.FrameLayout.LayoutParams.MATCH_PARENT, 8
                   ));
 
                   setContentView(layout);
@@ -272,7 +282,7 @@ jobs:
       - name: Compilar AAB (Google Play) e APK (Instalador)
         run: |
           cd android-project
-          gradle bundleRelease assembleRelease --no-daemon
+          gradle bundleRelease assembleRelease --no-daemon --stacktrace
 
       - name: Organizar Arquivos Finais
         run: |
