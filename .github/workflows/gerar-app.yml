@@ -20,21 +20,22 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Configurar Android SDK
-        uses: android-actions/setup-android@v3
-
       - name: Baixar e Instalar Gradle 8.5
         run: |
           wget -q https://services.gradle.org/distributions/gradle-8.5-bin.zip
           unzip -q gradle-8.5-bin.zip
           echo "$PWD/gradle-8.5/bin" >> $GITHUB_PATH
 
+      - name: Aceitar Licenças do Android SDK
+        run: |
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
+
       - name: Gerar Projeto Android e Chave de Assinatura
         run: |
           mkdir -p android-project/app/src/main/java/com/guizante/terminalb3
           mkdir -p android-project/app/src/main/res/values
 
-          # Gerar Keystore oficial dentro da pasta do projeto
+          # Gerar Chave Oficial (Keystore)
           keytool -genkeypair \
             -alias terminalb3 \
             -keyalg RSA \
@@ -45,7 +46,6 @@ jobs:
             -keypass senha123456 \
             -dname "CN=Terminal B3, OU=Mobile, O=Guizante, L=SP, S=SP, C=BR"
 
-          # 1. settings.gradle
           cat << 'EOF' > android-project/settings.gradle
           pluginManagement {
               repositories {
@@ -65,14 +65,12 @@ jobs:
           include ':app'
           EOF
 
-          # 2. build.gradle raiz
           cat << 'EOF' > android-project/build.gradle
           plugins {
               id 'com.android.application' version '8.2.2' apply false
           }
           EOF
 
-          # 3. app/build.gradle com assinatura Play Store
           cat << 'EOF' > android-project/app/build.gradle
           plugins {
               id 'com.android.application'
@@ -120,7 +118,6 @@ jobs:
           }
           EOF
 
-          # 4. AndroidManifest.xml
           cat << 'EOF' > android-project/app/src/main/AndroidManifest.xml
           <?xml version="1.0" encoding="utf-8"?>
           <manifest xmlns:android="http://schemas.android.com/apk/res/android">
@@ -149,11 +146,10 @@ jobs:
           </manifest>
           EOF
 
-          # 5. Cores e Temas Dark
           cat << 'EOF' > android-project/app/src/main/res/values/colors.xml
           <?xml version="1.0" encoding="utf-8"?>
           <resources>
-              <color name="bg_dark">#0B0F17</color>
+              <color name="bg_dark">#07090E</color>
               <color name="primary_blue">#38BDF8</color>
           </resources>
           EOF
@@ -169,7 +165,6 @@ jobs:
           </resources>
           EOF
 
-          # 6. MainActivity.java
           cat << 'EOF' > android-project/app/src/main/java/com/guizante/terminalb3/MainActivity.java
           package com.guizante.terminalb3;
 
@@ -198,14 +193,14 @@ jobs:
                   super.onCreate(savedInstanceState);
 
                   androidx.coordinatorlayout.widget.CoordinatorLayout layout = new androidx.coordinatorlayout.widget.CoordinatorLayout(this);
-                  layout.setBackgroundColor(0xFF0B0F17);
+                  layout.setBackgroundColor(0xFF07090E);
 
                   swipeRefresh = new SwipeRefreshLayout(this);
                   swipeRefresh.setColorSchemeColors(0xFF38BDF8);
-                  swipeRefresh.setProgressBackgroundColorSchemeColor(0xFF1E293B);
+                  swipeRefresh.setProgressBackgroundColorSchemeColor(0xFF0E1524);
 
                   webView = new WebView(this);
-                  webView.setBackgroundColor(0xFF0B0F17);
+                  webView.setBackgroundColor(0xFF07090E);
 
                   progressBar = new ProgressBar(this, null, android.R.attr.progressBarStyleHorizontal);
                   progressBar.setMax(100);
