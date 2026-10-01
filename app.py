@@ -21,54 +21,66 @@ st.set_page_config(
 st.markdown("""
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#0b0f17">
+    <meta name="theme-color" content="#07090e">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <style>
+    /* Tipografia Profissional Global */
+    html, body, [class*="css"], .stMarkdown, p, span, label, input, button {
+        font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+    }
+
     /* Ocultar elementos padrão do Streamlit para parecer App Nativo */
     #MainMenu, header, footer, [data-testid="stToolbar"], [data-testid="stDecoration"], [data-testid="stStatusWidget"] {
         display: none !important;
         visibility: hidden !important;
     }
 
-    /* 1. Base e Fundo Geral Otimizado para Mobile */
+    /* 1. Base e Fundo Geral Fintech Premium (Obsidian Deep Blue) */
     .stApp { 
-        background-color: #0b0f17 !important; 
-        color: #f1f5f9 !important; 
+        background: radial-gradient(circle at 50% 0%, #0d1527 0%, #07090e 65%) !important; 
+        color: #f8fafc !important; 
     }
     
     .block-container {
-        padding-top: 1rem !important;
+        padding-top: 0.8rem !important;
         padding-bottom: 2rem !important;
         padding-left: 0.75rem !important;
         padding-right: 0.75rem !important;
         max-width: 100% !important;
+    }
+
+    /* Títulos e Tipografia com Máxima Nitidez */
+    h1, h2, h3, h4, h5, h6 {
+        color: #ffffff !important;
+        font-weight: 700 !important;
+        letter-spacing: -0.02em !important;
     }
     
     /* 2. Ticker Tape / Carrossel Macro no Topo */
     .ticker-wrap {
         display: flex;
         overflow-x: auto;
-        gap: 12px;
-        padding: 4px 0px 14px 0px;
-        scrollbar-width: thin;
+        gap: 10px;
+        padding: 4px 0px 12px 0px;
+        scrollbar-width: none;
         margin-bottom: 8px;
     }
     .ticker-wrap::-webkit-scrollbar {
-        height: 4px;
-    }
-    .ticker-wrap::-webkit-scrollbar-thumb {
-        background: #1f2937;
-        border-radius: 4px;
+        display: none;
     }
     .ticker-card {
         flex: 0 0 auto;
-        background-color: #111827;
-        border: 1px solid #1f2937;
-        border-radius: 8px;
+        background: linear-gradient(145deg, #0e1524 0%, #111a2e 100%);
+        border: 1px solid rgba(56, 189, 248, 0.16);
+        border-radius: 9px;
         padding: 8px 14px;
         min-width: 145px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
     }
     .ticker-title {
         font-size: 0.72rem;
@@ -78,207 +90,212 @@ st.markdown("""
         letter-spacing: 0.5px;
     }
     .ticker-val {
-        font-size: 1.05rem;
-        color: #f8fafc;
+        font-size: 1.08rem;
+        color: #ffffff;
         font-weight: 700;
         margin: 2px 0;
     }
-    .ticker-delta-up { color: #10b981; font-size: 0.78rem; font-weight: 600; }
-    .ticker-delta-down { color: #f43f5e; font-size: 0.78rem; font-weight: 600; }
-    .ticker-delta-neutral { color: #38bdf8; font-size: 0.78rem; font-weight: 600; }
+    .ticker-delta-up { color: #00e676; font-size: 0.8rem; font-weight: 700; }
+    .ticker-delta-down { color: #ff3b5c; font-size: 0.8rem; font-weight: 700; }
+    .ticker-delta-neutral { color: #38bdf8; font-size: 0.8rem; font-weight: 700; }
 
-    /* 3. Cards de Métricas */
+    /* 3. Cards de Métricas com Elevação e Alto Contraste */
     div[data-testid="stMetric"] {
-        background-color: #111827 !important;
-        border: 1px solid #1f2937 !important;
-        border-radius: 8px !important;
-        padding: 12px 16px !important;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25) !important;
+        background: linear-gradient(145deg, #0e1524 0%, #111a2e 100%) !important;
+        border: 1px solid rgba(56, 189, 248, 0.18) !important;
+        border-radius: 10px !important;
+        padding: 14px 18px !important;
+        box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
     }
     div[data-testid="stMetricLabel"] {
-        font-size: 0.84rem !important;
-        color: #94a3b8 !important;
-        font-weight: 500 !important;
+        font-size: 0.85rem !important;
+        color: #cbd5e1 !important;
+        font-weight: 600 !important;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
     }
     div[data-testid="stMetricValue"] {
-        font-size: 1.35rem !important;
-        color: #f8fafc !important;
-        font-weight: 700 !important;
-        margin-top: 2px !important;
+        font-size: 1.45rem !important;
+        color: #ffffff !important;
+        font-weight: 800 !important;
+        margin-top: 3px !important;
+        letter-spacing: -0.5px !important;
     }
     
     /* 4. Inputs e Dropdowns */
     div[data-baseweb="select"] > div {
-        background-color: #111827 !important;
-        border: 1px solid #374151 !important;
-        border-radius: 6px !important;
-        color: #f1f5f9 !important;
+        background-color: #0e1524 !important;
+        border: 1px solid rgba(56, 189, 248, 0.22) !important;
+        border-radius: 8px !important;
+        color: #f8fafc !important;
     }
     div[data-baseweb="select"] span, div[data-baseweb="select"] div {
-        color: #f1f5f9 !important;
+        color: #f8fafc !important;
     }
     div[data-baseweb="select"] svg {
-        fill: #94a3b8 !important;
+        fill: #38bdf8 !important;
     }
     div[data-baseweb="input"] {
-        background-color: #111827 !important;
-        border: 1px solid #374151 !important;
-        border-radius: 6px !important;
+        background-color: #0e1524 !important;
+        border: 1px solid rgba(56, 189, 248, 0.22) !important;
+        border-radius: 8px !important;
     }
     div[data-baseweb="input"] input {
-        background-color: #111827 !important;
-        color: #f1f5f9 !important;
+        background-color: #0e1524 !important;
+        color: #ffffff !important;
     }
     
     /* Menu Popover / Dropdown Suspenso */
     div[data-baseweb="popover"], div[data-baseweb="menu"], ul[role="listbox"] {
-        background-color: #111827 !important;
-        border: 1px solid #374151 !important;
-        border-radius: 6px !important;
+        background-color: #0e1524 !important;
+        border: 1px solid rgba(56, 189, 248, 0.25) !important;
+        border-radius: 8px !important;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6) !important;
     }
     li[role="option"] {
-        background-color: #111827 !important;
-        color: #f1f5f9 !important;
-        padding: 8px 12px !important;
+        background-color: #0e1524 !important;
+        color: #f8fafc !important;
+        padding: 9px 14px !important;
+        font-size: 0.88rem !important;
     }
     li[role="option"]:hover, li[aria-selected="true"] {
-        background-color: #1f2937 !important;
+        background-color: #1a253c !important;
         color: #38bdf8 !important;
+        font-weight: 600 !important;
     }
 
-    /* 5. Abas com scroll horizontal suave no Mobile */
+    /* 5. Abas Estilo Pílula Fintech */
     .stTabs [data-baseweb="tab-list"] {
-        gap: 6px !important;
-        border-bottom: 1px solid #1f2937 !important;
+        gap: 8px !important;
+        border-bottom: 1px solid rgba(56, 189, 248, 0.15) !important;
         overflow-x: auto !important;
         flex-wrap: nowrap !important;
         -webkit-overflow-scrolling: touch !important;
         scrollbar-width: none !important;
+        padding-bottom: 6px !important;
     }
     .stTabs [data-baseweb="tab-list"]::-webkit-scrollbar {
         display: none !important;
     }
     .stTabs [data-baseweb="tab"] {
-        background: transparent !important;
-        border: none !important;
-        padding: 10px 16px !important;
+        background: rgba(14, 21, 36, 0.6) !important;
+        border: 1px solid rgba(255, 255, 255, 0.06) !important;
+        border-radius: 8px !important;
+        padding: 9px 16px !important;
         color: #94a3b8 !important;
         font-size: 0.88rem !important;
-        font-weight: 500 !important;
+        font-weight: 600 !important;
         white-space: nowrap !important;
         flex-shrink: 0 !important;
+        transition: all 0.2s ease !important;
+    }
+    .stTabs [data-baseweb="tab"]:hover {
+        color: #f8fafc !important;
+        border-color: rgba(56, 189, 248, 0.3) !important;
     }
     .stTabs [aria-selected="true"] {
+        background: linear-gradient(135deg, rgba(56, 189, 248, 0.16) 0%, rgba(37, 99, 235, 0.16) 100%) !important;
         color: #38bdf8 !important;
-        font-weight: 600 !important;
-        border-bottom: none !important;
+        font-weight: 700 !important;
+        border: 1px solid rgba(56, 189, 248, 0.4) !important;
     }
     .stTabs [data-baseweb="tab-highlight"] {
-        background-color: #38bdf8 !important;
-        height: 2px !important;
+        display: none !important;
     }
     .stTabs [data-baseweb="tab-border"] {
-        background-color: #1f2937 !important;
+        display: none !important;
     }
 
     /* 6. Expander */
     details[data-testid="stExpander"] {
-        background-color: #111827 !important;
-        border: 1px solid #1f2937 !important;
-        border-radius: 8px !important;
+        background: linear-gradient(145deg, #0e1524 0%, #111a2e 100%) !important;
+        border: 1px solid rgba(56, 189, 248, 0.16) !important;
+        border-radius: 10px !important;
         margin-top: 8px !important;
     }
     summary[data-testid="stExpanderSummary"] {
-        color: #94a3b8 !important;
-        font-size: 0.88rem !important;
+        color: #cbd5e1 !important;
+        font-size: 0.9rem !important;
+        font-weight: 600 !important;
     }
     summary[data-testid="stExpanderSummary"]:hover {
         color: #38bdf8 !important;
     }
 
-    /* 7. Botões */
+    /* 7. Botões Estilo Fintech Elétrico */
     .stButton button {
-        border-radius: 6px !important;
-        border: 1px solid #374151 !important;
-        background-color: #1e293b !important;
-        color: #f1f5f9 !important;
-        font-size: 0.85rem !important;
-        font-weight: 500 !important;
+        border-radius: 8px !important;
+        border: 1px solid rgba(56, 189, 248, 0.3) !important;
+        background: linear-gradient(135deg, #0284c7 0%, #1e40af 100%) !important;
+        color: #ffffff !important;
+        font-size: 0.88rem !important;
+        font-weight: 700 !important;
         transition: all 0.2s ease !important;
+        box-shadow: 0 4px 14px rgba(2, 132, 199, 0.28) !important;
     }
     .stButton button:hover {
         border-color: #38bdf8 !important;
-        color: #38bdf8 !important;
-        background-color: #1f2937 !important;
+        color: #ffffff !important;
+        background: linear-gradient(135deg, #0369a1 0%, #1d4ed8 100%) !important;
+        box-shadow: 0 6px 20px rgba(2, 132, 199, 0.45) !important;
+        transform: translateY(-1px) !important;
     }
 
-    /* 8. Caixas de Simulação */
-    .sim-card {
-        background-color: #111827 !important;
-        border: 1px solid #1f2937 !important;
-        border-radius: 8px !important;
+    /* 8. Caixas de Simulação e Cards Renda Fixa */
+    .sim-card, .rf-card, .top-box {
+        background: linear-gradient(145deg, #0e1524 0%, #111a2e 100%) !important;
+        border: 1px solid rgba(56, 189, 248, 0.16) !important;
+        border-radius: 10px !important;
         padding: 16px 20px !important;
         margin-bottom: 14px !important;
-    }
-    .top-box {
-        background-color: #111827;
-        border: 1px solid #1f2937;
-        border-radius: 8px;
-        padding: 12px 14px;
-        margin-bottom: 10px;
-    }
-    .rf-card {
-        background-color: #111827;
-        border: 1px solid #1f2937;
-        border-radius: 10px;
-        padding: 14px 16px;
-        margin-bottom: 12px;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
     }
     .rf-badge {
         display: inline-block;
-        font-size: 0.68rem;
+        font-size: 0.7rem;
         font-weight: 700;
-        padding: 2px 7px;
-        border-radius: 4px;
+        padding: 3px 8px;
+        border-radius: 5px;
         letter-spacing: 0.4px;
         text-transform: uppercase;
         margin-bottom: 6px;
     }
     .rf-title {
-        font-size: 0.95rem;
-        font-weight: 600;
-        color: #f8fafc;
-        margin-bottom: 2px;
+        font-size: 1rem;
+        font-weight: 700;
+        color: #ffffff;
+        margin-bottom: 3px;
     }
     .rf-sub {
-        font-size: 0.75rem;
-        color: #94a3b8;
+        font-size: 0.78rem;
+        color: #cbd5e1;
         margin-bottom: 10px;
     }
     .rf-val {
-        font-size: 1.45rem;
-        font-weight: 700;
+        font-size: 1.55rem;
+        font-weight: 800;
         color: #ffffff;
         letter-spacing: -0.5px;
         margin-bottom: 4px;
+        text-shadow: 0 1px 2px rgba(0,0,0,0.5);
     }
     .rf-lucro {
-        font-size: 0.82rem;
-        font-weight: 600;
-        color: #10b981;
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: #00e676;
     }
     .rf-footer {
-        font-size: 0.72rem;
-        color: #64748b;
-        margin-top: 8px;
-        border-top: 1px solid #1f2937;
-        padding-top: 6px;
+        font-size: 0.75rem;
+        color: #94a3b8;
+        margin-top: 10px;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        padding-top: 8px;
     }
-    /* Estilo de Segmented Pills para Radio Horizontal */
+
+    /* Segmented Pills para Radio Horizontal */
     div[data-testid="stRadio"] > div[role="radiogroup"] {
-        background-color: #111827 !important;
-        border: 1px solid #1f2937 !important;
+        background-color: #0e1524 !important;
+        border: 1px solid rgba(56, 189, 248, 0.18) !important;
         border-radius: 8px !important;
         padding: 5px 10px !important;
         display: flex !important;
@@ -290,13 +307,21 @@ st.markdown("""
     div[data-testid="stRadio"] label span {
         font-size: 0.85rem !important;
         color: #cbd5e1 !important;
-        font-weight: 500 !important;
+        font-weight: 600 !important;
+    }
+
+    /* Tabelas e Dataframes com Nitidez Máxima */
+    div[data-testid="stDataFrame"] {
+        border: 1px solid rgba(56, 189, 248, 0.18) !important;
+        border-radius: 10px !important;
+        overflow: hidden !important;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.35) !important;
     }
 
     /* Otimizações Mobile e Touch Targets */
     @media (max-width: 768px) {
         .block-container {
-            padding-top: 0.5rem !important;
+            padding-top: 0.4rem !important;
             padding-left: 0.5rem !important;
             padding-right: 0.5rem !important;
         }
@@ -310,7 +335,7 @@ st.markdown("""
             padding: 10px 12px !important;
         }
         div[data-testid="stMetricValue"] {
-            font-size: 1.15rem !important;
+            font-size: 1.25rem !important;
         }
         .sim-card, .rf-card, .top-box {
             padding: 12px 14px !important;
@@ -422,14 +447,14 @@ def renderizar_carrossel_deslizante():
         {"nome": "🏛️ SELIC / CDI", "val": "10,75% a.a.", "delta": "Taxa Básica", "cor": "#38bdf8"},
         {"nome": "🏷️ IPCA", "val": "4,12% a.a.", "delta": "12 Meses", "cor": "#38bdf8"},
         {"nome": "🇺🇸 S&P 500", "val": "5.864 pts", "delta": "+0.32%", "cor": "#10b981"},
-        {"nome": "🪙 BITCOIN", "val": "R$ 364.200", "delta": "+2.40%", "cor": "#10b981"},
-        {"nome": "PETR4", "val": "R$ 38.45", "delta": "+0.85%", "cor": "#10b981"},
-        {"nome": "VALE3", "val": "R$ 57.30", "delta": "-0.65%", "cor": "#f43f5e"},
-        {"nome": "ITUB4", "val": "R$ 36.20", "delta": "+1.10%", "cor": "#10b981"},
-        {"nome": "BBAS3", "val": "R$ 27.40", "delta": "+1.35%", "cor": "#10b981"},
-        {"nome": "CPLE6", "val": "R$ 9.85", "delta": "+0.50%", "cor": "#10b981"},
-        {"nome": "WEGE3", "val": "R$ 54.60", "delta": "+0.75%", "cor": "#10b981"},
-        {"nome": "EMBR3", "val": "R$ 53.80", "delta": "+2.80%", "cor": "#10b981"}
+        {"nome": "🪙 BITCOIN", "val": "R$ 364.200", "delta": "+2.40%", "cor": "#00e676"},
+        {"nome": "PETR4", "val": "R$ 38.45", "delta": "+0.85%", "cor": "#00e676"},
+        {"nome": "VALE3", "val": "R$ 57.30", "delta": "-0.65%", "cor": "#ff3b5c"},
+        {"nome": "ITUB4", "val": "R$ 36.20", "delta": "+1.10%", "cor": "#00e676"},
+        {"nome": "BBAS3", "val": "R$ 27.40", "delta": "+1.35%", "cor": "#00e676"},
+        {"nome": "CPLE6", "val": "R$ 9.85", "delta": "+0.50%", "cor": "#00e676"},
+        {"nome": "WEGE3", "val": "R$ 54.60", "delta": "+0.75%", "cor": "#00e676"},
+        {"nome": "EMBR3", "val": "R$ 53.80", "delta": "+2.80%", "cor": "#00e676"}
     ]
     # Duplicação exata da lista para efeito de loop infinito suave (seamless marquee)
     itens_html = ""
@@ -451,7 +476,7 @@ def renderizar_carrossel_deslizante():
         body {{
             margin: 0;
             padding: 0;
-            background-color: #0b0f17;
+            background-color: transparent;
             overflow: hidden;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             user-select: none;
@@ -459,9 +484,10 @@ def renderizar_carrossel_deslizante():
         .ticker-strip {{
             width: 100%;
             overflow: hidden;
-            background-color: #111827;
-            border-top: 1px solid #1f2937;
-            border-bottom: 1px solid #1f2937;
+            background: linear-gradient(90deg, #090e18 0%, #0d1629 50%, #090e18 100%);
+            border-top: 1px solid rgba(56, 189, 248, 0.16);
+            border-bottom: 1px solid rgba(56, 189, 248, 0.16);
+            border-radius: 8px;
             padding: 7px 0;
             display: flex;
             align-items: center;
@@ -484,7 +510,7 @@ def renderizar_carrossel_deslizante():
             align-items: center;
             gap: 7px;
             padding: 0 18px;
-            border-right: 1px solid #1f2937;
+            border-right: 1px solid rgba(255, 255, 255, 0.08);
         }}
         .ticker-title {{
             color: #94a3b8;
@@ -493,7 +519,7 @@ def renderizar_carrossel_deslizante():
             text-transform: uppercase;
         }}
         .ticker-num {{
-            color: #f8fafc;
+            color: #ffffff;
             font-size: 12px;
             font-weight: 700;
         }}
@@ -537,23 +563,23 @@ tab_renda_fixa, tab_renda_variavel, tab_detalhes, tab_analise = st.tabs([
 with tab_renda_fixa:
     # Banner de Cabeçalho Institucional (Padrão XP / BTG / Bloomberg)
     st.markdown("""
-    <div style="background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.9) 100%); border: 1px solid rgba(56, 189, 248, 0.2); border-left: 4px solid #38bdf8; border-radius: 10px; padding: 14px 20px; margin-bottom: 14px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);">
+    <div style="background: linear-gradient(135deg, #0e1524 0%, #131d31 100%); border: 1px solid rgba(56, 189, 248, 0.22); border-left: 4px solid #38bdf8; border-radius: 10px; padding: 14px 20px; margin-bottom: 14px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.35);">
         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
             <div>
                 <div style="display: flex; align-items: center; gap: 10px;">
                     <span style="font-size: 1.2rem;">🛡️</span>
-                    <span style="font-size: 1.15rem; font-weight: 700; color: #f8fafc; letter-spacing: -0.3px;">Simulador Oficial de Renda Fixa</span>
-                    <span style="background: rgba(16, 185, 129, 0.15); color: #10b981; font-size: 0.7rem; font-weight: 700; padding: 2px 7px; border-radius: 4px; text-transform: uppercase;">Mercado Brasileiro</span>
+                    <span style="font-size: 1.15rem; font-weight: 700; color: #ffffff; letter-spacing: -0.3px;">Simulador Oficial de Renda Fixa</span>
+                    <span style="background: rgba(0, 230, 118, 0.15); color: #00e676; font-size: 0.7rem; font-weight: 700; padding: 2px 7px; border-radius: 4px; text-transform: uppercase;">Mercado Brasileiro</span>
                 </div>
-                <div style="font-size: 0.8rem; color: #94a3b8; margin-top: 3px;">
+                <div style="font-size: 0.82rem; color: #cbd5e1; margin-top: 3px;">
                     Simule o rendimento líquido real de títulos públicos e bancários com a tabela regressiva do IR, proteção do FGC e inflação (IPCA).
                 </div>
             </div>
             <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                <span style="background: #111827; border: 1px solid #1f2937; padding: 4px 10px; border-radius: 6px; font-size: 0.74rem; color: #cbd5e1;"><b>CDI:</b> 10,75% a.a.</span>
-                <span style="background: #111827; border: 1px solid #1f2937; padding: 4px 10px; border-radius: 6px; font-size: 0.74rem; color: #cbd5e1;"><b>Selic:</b> 10,75% a.a.</span>
-                <span style="background: #111827; border: 1px solid #1f2937; padding: 4px 10px; border-radius: 6px; font-size: 0.74rem; color: #cbd5e1;"><b>IPCA:</b> 4,12% a.a.</span>
-                <span style="background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.25); padding: 4px 10px; border-radius: 6px; font-size: 0.74rem; color: #38bdf8;"><b>FGC:</b> Até R$ 250k</span>
+                <span style="background: #0e1524; border: 1px solid rgba(56, 189, 248, 0.2); padding: 4px 10px; border-radius: 6px; font-size: 0.74rem; color: #f8fafc;"><b>CDI:</b> 10,75% a.a.</span>
+                <span style="background: #0e1524; border: 1px solid rgba(56, 189, 248, 0.2); padding: 4px 10px; border-radius: 6px; font-size: 0.74rem; color: #f8fafc;"><b>Selic:</b> 10,75% a.a.</span>
+                <span style="background: #0e1524; border: 1px solid rgba(56, 189, 248, 0.2); padding: 4px 10px; border-radius: 6px; font-size: 0.74rem; color: #f8fafc;"><b>IPCA:</b> 4,12% a.a.</span>
+                <span style="background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.35); padding: 4px 10px; border-radius: 6px; font-size: 0.74rem; color: #38bdf8;"><b>FGC:</b> Até R$ 250k</span>
             </div>
         </div>
     </div>
@@ -881,15 +907,15 @@ with tab_renda_fixa:
         # Balões de anotação nos pontos finais (Callouts diretos)
         fig_rf.add_annotation(
             x=num_meses, y=valores_cdb[-1], text=f"<b>CDB: R$ {valores_cdb[-1]:,.2f}</b>",
-            showarrow=True, arrowhead=2, arrowsize=1, arrowcolor="#10b981",
-            ax=55, ay=-14, bgcolor="#111827", bordercolor="#10b981", borderwidth=1.5,
-            font=dict(color="#10b981", size=11, family="Inter")
+            showarrow=True, arrowhead=2, arrowsize=1, arrowcolor="#00e676",
+            ax=55, ay=-14, bgcolor="#0e1524", bordercolor="#00e676", borderwidth=1.5,
+            font=dict(color="#00e676", size=11, family="Plus Jakarta Sans, sans-serif")
         )
         fig_rf.add_annotation(
             x=num_meses, y=valores_poup[-1], text=f"<b>Poupança: R$ {valores_poup[-1]:,.2f}</b>",
-            showarrow=True, arrowhead=2, arrowsize=1, arrowcolor="#f59e0b",
-            ax=55, ay=18, bgcolor="#111827", bordercolor="#f59e0b", borderwidth=1.5,
-            font=dict(color="#f59e0b", size=11, family="Inter")
+            showarrow=True, arrowhead=2, arrowsize=1, arrowcolor="#fbbf24",
+            ax=55, ay=18, bgcolor="#0e1524", bordercolor="#fbbf24", borderwidth=1.5,
+            font=dict(color="#fbbf24", size=11, family="Plus Jakarta Sans, sans-serif")
         )
 
         fig_rf.update_layout(
@@ -976,7 +1002,7 @@ with tab_renda_fixa:
     dif_cdb_poup = lucro_cdb - lucro_poup
     perc_a_mais = ((lucro_cdb / lucro_poup) - 1) * 100 if lucro_poup > 0 else 0
     st.markdown(f"""
-    <div style="background-color: #111827; border-left: 4px solid #10b981; padding: 12px 16px; border-radius: 6px; font-size: 0.88rem; color: #cbd5e1; margin-top: 8px;">
+    <div style="background: linear-gradient(145deg, #0e1524 0%, #111a2e 100%); border: 1px solid rgba(56, 189, 248, 0.18); border-left: 4px solid #00e676; padding: 14px 18px; border-radius: 8px; font-size: 0.88rem; color: #f8fafc; margin-top: 8px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.35);">
         💡 <b>Conclusão Prática para Investidores:</b> No prazo de <b>{prazo_escolhido}</b>, ao investir <b>R$ {VALOR_BASE:,.2f}</b>, o <b>CDB 110% CDI</b> deposita <b>+R$ {dif_cdb_poup:,.2f}</b> a mais no seu bolso do que a poupança tradicional (um rendimento <b>+{perc_a_mais:.0f}% superior</b>), mantendo a mesmíssima proteção garantida pelo Fundo Garantidor de Créditos (FGC até R$ 250 mil).
     </div>
     """, unsafe_allow_html=True)
@@ -1043,14 +1069,14 @@ with tab_renda_variavel:
             st.markdown("##### 🚀 Top 5 Maiores Altas do Dia (B3)")
             for _, r in df_altas_5.iterrows():
                 st.markdown(f"""
-                <div class="top-box" style="border-left: 4px solid #10b981; display: flex; justify-content: space-between; align-items: center;">
+                <div class="top-box" style="border-left: 4px solid #00e676; display: flex; justify-content: space-between; align-items: center;">
                     <div>
-                        <b>{r['Empresa']}</b> <span style="color:#94a3b8; font-size:0.8rem;">({r['Ticker']})</span><br>
-                        <span style="font-size:0.75rem; color:#94a3b8;">{r['Setor']}</span>
+                        <b style="color: #ffffff;">{r['Empresa']}</b> <span style="color:#94a3b8; font-size:0.8rem;">({r['Ticker']})</span><br>
+                        <span style="font-size:0.75rem; color:#cbd5e1;">{r['Setor']}</span>
                     </div>
                     <div style="text-align: right;">
-                        <span style="font-size:0.95rem; font-weight:600;">R$ {r['Preço (R$)']:.2f}</span><br>
-                        <span style="color:#10b981; font-weight:700; font-size:0.85rem;">+{r['Var. Dia (%)']:.2f}%</span>
+                        <span style="font-size:0.95rem; font-weight:700; color:#ffffff;">R$ {r['Preço (R$)']:.2f}</span><br>
+                        <span style="color:#00e676; font-weight:700; font-size:0.85rem;">+{r['Var. Dia (%)']:.2f}%</span>
                     </div>
                 </div>
                 """, unsafe_allow_html=True)
@@ -1059,14 +1085,14 @@ with tab_renda_variavel:
             st.markdown("##### 🔻 Top 5 Maiores Baixas do Dia (B3)")
             for _, r in df_quedas_5.iterrows():
                 st.markdown(f"""
-                <div class="top-box" style="border-left: 4px solid #f43f5e; display: flex; justify-content: space-between; align-items: center;">
+                <div class="top-box" style="border-left: 4px solid #ff3b5c; display: flex; justify-content: space-between; align-items: center;">
                     <div>
-                        <b>{r['Empresa']}</b> <span style="color:#94a3b8; font-size:0.8rem;">({r['Ticker']})</span><br>
-                        <span style="font-size:0.75rem; color:#94a3b8;">{r['Setor']}</span>
+                        <b style="color: #ffffff;">{r['Empresa']}</b> <span style="color:#94a3b8; font-size:0.8rem;">({r['Ticker']})</span><br>
+                        <span style="font-size:0.75rem; color:#cbd5e1;">{r['Setor']}</span>
                     </div>
                     <div style="text-align: right;">
-                        <span style="font-size:0.95rem; font-weight:600;">R$ {r['Preço (R$)']:.2f}</span><br>
-                        <span style="color:#f43f5e; font-weight:700; font-size:0.85rem;">{r['Var. Dia (%)']:.2f}%</span>
+                        <span style="font-size:0.95rem; font-weight:700; color:#ffffff;">R$ {r['Preço (R$)']:.2f}</span><br>
+                        <span style="color:#ff3b5c; font-weight:700; font-size:0.85rem;">{r['Var. Dia (%)']:.2f}%</span>
                     </div>
                 </div>
                 """, unsafe_allow_html=True)
@@ -1082,9 +1108,9 @@ with tab_renda_variavel:
 
     with col_sim_cfg:
         st.markdown(f"""
-        <div style="background-color: #111827; border: 1px solid #1f2937; border-radius: 8px; padding: 12px 16px; margin-bottom: 12px;">
-            <div style="font-size: 0.78rem; color: #94a3b8; font-weight: 600;">VALOR SIMULADO (PRÉ-FIXADO)</div>
-            <div style="font-size: 1.5rem; color: #38bdf8; font-weight: 700;">R$ 1.000,00</div>
+        <div style="background: linear-gradient(145deg, #0e1524 0%, #111a2e 100%); border: 1px solid rgba(56, 189, 248, 0.22); border-radius: 8px; padding: 14px 16px; margin-bottom: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.35);">
+            <div style="font-size: 0.78rem; color: #94a3b8; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">VALOR SIMULADO (PRÉ-FIXADO)</div>
+            <div style="font-size: 1.6rem; color: #38bdf8; font-weight: 800; margin-top: 2px;">R$ 1.000,00</div>
         </div>
         """, unsafe_allow_html=True)
 
@@ -1155,8 +1181,8 @@ with tab_renda_variavel:
             st.metric("Vs. Poupança Tradicional", f"{'+' if dif_poup >= 0 else ''}R$ {dif_poup:,.2f}", "A mais que a poupança" if dif_poup >= 0 else "Oscilação de mercado")
 
         st.markdown(f"""
-        <div style="background-color: #111827; border-left: 4px solid #10b981; padding: 10px 14px; border-radius: 6px; font-size: 0.85rem; color: #cbd5e1; margin-top: 10px;">
-            💡 <b>Para iniciantes:</b> Com <b>R$ 1.000,00</b> na sua conta da Rico, você se torna sócio de empresas reais. Os <b>R$ {div_ano:,.2f}</b> de dividendos estimados são creditados <b>direto na sua conta da corretora</b>, sem você precisar vender suas ações e 100% isentos de imposto.
+        <div style="background: linear-gradient(145deg, #0e1524 0%, #111a2e 100%); border: 1px solid rgba(56, 189, 248, 0.18); border-left: 4px solid #00e676; padding: 12px 16px; border-radius: 8px; font-size: 0.85rem; color: #f8fafc; margin-top: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+            💡 <b>Para iniciantes:</b> Com <b>R$ 1.000,00</b> na sua conta da corretora, você se torna sócio de empresas reais. Os <b>R$ {div_ano:,.2f}</b> de dividendos estimados são creditados <b>direto na sua conta</b>, sem você precisar vender suas ações e 100% isentos de imposto.
         </div>
         """, unsafe_allow_html=True)
 
