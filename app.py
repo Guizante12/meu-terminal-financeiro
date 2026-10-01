@@ -29,9 +29,21 @@ st.markdown("""
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <style>
-    /* Tipografia Profissional Global */
-    html, body, [class*="css"], .stMarkdown, p, span, label, input, button {
+    /* Tipografia Profissional Global (sem sobrescrever ícones do sistema) */
+    html, body, [class*="css"], .stMarkdown, p, label, input, button {
         font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+    }
+
+    /* Proteger fontes de ícones do Streamlit contra substituição de texto */
+    [class*="material-symbols"], [class*="material-icons"], [data-testid*="Icon"] {
+        font-family: 'Material Symbols Rounded', 'Material Symbols Outlined', 'Material Icons' !important;
+    }
+
+    /* Ocultar chevron/seta textual que vaza em popovers pequenos */
+    button[data-testid="stBaseButton-popover"] [class*="material-symbols"],
+    button[data-testid="stBaseButton-popover"] [class*="material-icons"] {
+        display: none !important;
+        font-size: 0px !important;
     }
 
     /* Ocultar elementos padrão do Streamlit para parecer App Nativo */
@@ -122,27 +134,44 @@ st.markdown("""
         letter-spacing: -0.5px !important;
     }
     
-    /* 4. Inputs e Dropdowns */
+    /* 4. Rótulos dos Campos e Inputs com 100% de Contraste e Nitidez */
+    div[data-testid="stWidgetLabel"], 
+    div[data-testid="stWidgetLabel"] label, 
+    div[data-testid="stWidgetLabel"] p,
+    label[data-baseweb="label"],
+    label p,
+    .stSelectbox label,
+    .stNumberInput label,
+    .stTextInput label {
+        color: #f8fafc !important;
+        font-weight: 700 !important;
+        font-size: 0.92rem !important;
+        letter-spacing: 0.2px !important;
+        margin-bottom: 4px !important;
+    }
+
     div[data-baseweb="select"] > div {
         background-color: #0e1524 !important;
-        border: 1px solid rgba(56, 189, 248, 0.22) !important;
+        border: 1px solid rgba(56, 189, 248, 0.25) !important;
         border-radius: 8px !important;
         color: #f8fafc !important;
     }
     div[data-baseweb="select"] span, div[data-baseweb="select"] div {
         color: #f8fafc !important;
+        font-weight: 600 !important;
     }
     div[data-baseweb="select"] svg {
         fill: #38bdf8 !important;
     }
     div[data-baseweb="input"] {
         background-color: #0e1524 !important;
-        border: 1px solid rgba(56, 189, 248, 0.22) !important;
+        border: 1px solid rgba(56, 189, 248, 0.25) !important;
         border-radius: 8px !important;
     }
     div[data-baseweb="input"] input {
         background-color: #0e1524 !important;
         color: #ffffff !important;
+        font-weight: 600 !important;
     }
     
     /* Menu Popover / Dropdown Suspenso */
@@ -164,7 +193,7 @@ st.markdown("""
         font-weight: 600 !important;
     }
 
-    /* 5. Abas Estilo Pílula Fintech */
+    /* 5. Abas Estilo Pílula Fintech - Alto Contraste */
     .stTabs [data-baseweb="tab-list"] {
         gap: 8px !important;
         border-bottom: 1px solid rgba(56, 189, 248, 0.15) !important;
@@ -178,26 +207,39 @@ st.markdown("""
         display: none !important;
     }
     .stTabs [data-baseweb="tab"] {
-        background: rgba(14, 21, 36, 0.6) !important;
-        border: 1px solid rgba(255, 255, 255, 0.06) !important;
+        background: rgba(14, 21, 36, 0.75) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
         border-radius: 8px !important;
         padding: 9px 16px !important;
-        color: #94a3b8 !important;
-        font-size: 0.88rem !important;
-        font-weight: 600 !important;
         white-space: nowrap !important;
         flex-shrink: 0 !important;
         transition: all 0.2s ease !important;
     }
+    .stTabs [data-baseweb="tab"] p,
+    .stTabs [data-baseweb="tab"] span,
+    .stTabs [data-baseweb="tab"] div {
+        color: #cbd5e1 !important;
+        font-size: 0.88rem !important;
+        font-weight: 600 !important;
+        opacity: 1 !important;
+    }
     .stTabs [data-baseweb="tab"]:hover {
-        color: #f8fafc !important;
-        border-color: rgba(56, 189, 248, 0.3) !important;
+        background: rgba(30, 41, 59, 0.9) !important;
+        border-color: rgba(56, 189, 248, 0.4) !important;
+    }
+    .stTabs [data-baseweb="tab"]:hover p,
+    .stTabs [data-baseweb="tab"]:hover span {
+        color: #ffffff !important;
     }
     .stTabs [aria-selected="true"] {
-        background: linear-gradient(135deg, rgba(56, 189, 248, 0.16) 0%, rgba(37, 99, 235, 0.16) 100%) !important;
+        background: linear-gradient(135deg, rgba(56, 189, 248, 0.22) 0%, rgba(37, 99, 235, 0.22) 100%) !important;
+        border: 1px solid #38bdf8 !important;
+    }
+    .stTabs [aria-selected="true"] p,
+    .stTabs [aria-selected="true"] span,
+    .stTabs [aria-selected="true"] div {
         color: #38bdf8 !important;
         font-weight: 700 !important;
-        border: 1px solid rgba(56, 189, 248, 0.4) !important;
     }
     .stTabs [data-baseweb="tab-highlight"] {
         display: none !important;
@@ -385,27 +427,29 @@ def obter_historico_ativo(ticker, period):
         df = gerar_historico_sintetico(ticker, period)
     return df
 
-# --- 1. CABEÇALHO CLEAN COM BOTÃO ÚNICO DE ATUALIZAÇÃO ---
-col_head1, col_head2, col_head3 = st.columns([5.2, 1.3, 0.4])
+# --- 1. CABEÇALHO COM BOTÕES ALINHADOS ---
+col_head1, col_head2 = st.columns([3.8, 2.2])
 with col_head1:
     st.markdown("### 📊 Terminal de Investimentos & Mercado")
 with col_head2:
-    btn_atualizar = st.button("🔄 Atualizar", use_container_width=True)
-with col_head3:
-    with st.popover("⚙️"):
-        st.caption("Auto-atualização:")
-        opcao_refresh = st.radio(
-            "Frequência:",
-            [
-                "⏱️ A cada 1 min",
-                "⚡ A cada 30 seg",
-                "🕒 A cada 5 min",
-                "⏳ A cada 10 min",
-                "⏸️ Manual"
-            ],
-            index=0,
-            label_visibility="collapsed"
-        )
+    sub_c1, sub_c2 = st.columns([3.2, 1.3])
+    with sub_c1:
+        btn_atualizar = st.button("🔄 Atualizar", use_container_width=True)
+    with sub_c2:
+        with st.popover("⚙️", use_container_width=True):
+            st.caption("Frequência de Atualização:")
+            opcao_refresh = st.radio(
+                "Frequência:",
+                [
+                    "⏱️ A cada 1 min",
+                    "⚡ A cada 30 seg",
+                    "🕒 A cada 5 min",
+                    "⏳ A cada 10 min",
+                    "⏸️ Manual"
+                ],
+                index=0,
+                label_visibility="collapsed"
+            )
 
 if btn_atualizar:
     st.cache_data.clear()
