@@ -36,7 +36,13 @@ jobs:
           mkdir -p android-project/app/src/main/res/values
           mkdir -p android-project/app/src/main/res/drawable
 
-          # Criar arquivo de regras Proguard vazio para evitar erro de arquivo inexistente
+          # Habilitar AndroidX no gradle.properties
+          cat << 'EOF' > android-project/gradle.properties
+          android.useAndroidX=true
+          android.nonTransitiveRClass=true
+          org.gradle.jvmargs=-Xmx2048m
+          EOF
+
           touch android-project/app/proguard-rules.pro
 
           # Gerar Chave Oficial (Keystore)
@@ -282,7 +288,7 @@ jobs:
       - name: Compilar AAB (Google Play) e APK (Instalador)
         run: |
           cd android-project
-          gradle bundleRelease assembleRelease --no-daemon --stacktrace
+          gradle bundleRelease assembleRelease --no-daemon
 
       - name: Organizar Arquivos Finais
         run: |
