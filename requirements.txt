@@ -1,0 +1,7 @@
+streamlit
+yfinance
+plotly
+pandas
+numpy
+google-genai
+tabulate
